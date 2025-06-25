@@ -1,269 +1,416 @@
+
 # Cypress Crash Course
-Welcome! This guide is designed to help you learn Cypress.
+
+Welcome! This guide is designed to get you started with Cypress and help you write clear, robust, and maintainable end-to-end tests for your Angular application.
+
+---
+
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Folder Structure](#folder-structure)
+- [Core Cypress Commands](#core-cypress-commands)
+  - [cy.visit()](#cyvisit)
+  - [cy.get()](#cyget)
+  - [cy.contains()](#cycontains)
+  - [cy.click()](#cyclick)
+  - [cy.type()](#cytype)
+  - [cy.should()](#cyshould)
+- [Network Requests: Intercept and Fixtures](#network-requests-intercept-and-fixtures)
+  - [cy.intercept()](#cyintercept)
+  - [Fixtures](#fixtures)
+  - [Combining Intercept and Fixtures](#combining-intercept-and-fixtures)
+- [Organizing Tests](#organizing-tests)
+- [Custom Commands](#custom-commands)
+- [Helpful Tips](#helpful-tips)
+- [Common Pitfalls](#common-pitfalls)
+- [Happy Testing!](#happy-testing)
+
 ---
 
 ## Getting Started
 
-Follow these clear and straightforward steps to get your Angular application running and ready for testing with Cypress.
+Follow these steps to set up your Angular app and Cypress:
 
-### **Step 1: Clone the Angular Application**
+### 1. Clone the Angular Application
 
-Clone the application's repository from GitHub:
+Clone the repository from GitHub:
 ```bash
 git clone https://github.com/ThimBoer/cypress-crash-course.git
 ```
-Navigate into the cloned repository directory:
-```
+Navigate into the project folder:
+```bash
 cd <repository-folder>
 ```
-Replace `<repository-folder>` with your repository’s actual name.
+Replace `<repository-folder>` with the actual folder name.
 
-### **Step 2: Install Application Dependencies**
+---
 
-Install all required dependencies by running:
+### 2. Install Application Dependencies
+
+Install all necessary packages:
 ```bash
 npm install
 ```
 
-### **Step 3: Run the Angular Application**
+---
 
-Start your Angular application using:
+### 3. Run the Angular Application
+
+Start your app locally:
 ```bash
 ng serve
 ```
-Your app should now be running locally and can usually be accessed at:
-[http://localhost:4200]
+Your app should now be available at [http://localhost:4200](http://localhost:4200).
 
-### **Step 4: Install Cypress**
+---
 
-Open a new terminal window (keeping your app running in the original terminal) and run:
+### 4. Install Cypress
+
+Open a new terminal window (keep the app running) and install Cypress as a dev dependency:
 ```bash
 npm install cypress --save-dev
 ```
-This installs Cypress specifically for development and testing purposes.
 
-### **Step 5: Open Cypress Test Runner**
+---
 
-Launch the Cypress Test Runner with the command:
+### 5. Open Cypress Test Runner
+
+Launch the Cypress UI:
 ```bash
 npx cypress open
 ```
-This will open Cypress's interface, allowing you to easily manage and execute your tests.
+This opens the interface where you can run and manage your tests.
 
+---
 
-## Tips && Tricks
+## Folder Structure
 
-### Visiting a Page (`cy.visit()`)
-Loads a specific webpage within Cypress. In our Test we can reach at http://localhost:4200
+A typical Cypress folder structure looks like this:
 
-**Example:**
+```text
+cypress/
+├── downloads/         # Downloaded files during tests
+├── e2e/               # Place for your end-to-end tests
+│   └── [test files]
+├── fixtures/          # Mock data for tests
+│   └── example.json
+└── support/           # Custom commands and utilities
+    └── commands.js
+```
 
+---
+
+## Core Cypress Commands
+
+Below are the most commonly used Cypress commands, each explained with practical examples.
+
+---
+
+### `cy.visit()`
+
+**Purpose:**  
+Loads a web page into the Cypress browser for testing.  
+This is usually the first command in a test—it sets up the starting state.
+
+**Usage:**
 ```js
 cy.visit('http://localhost:4200/')
 ```
-**Tip:** 
-In the cypress.config.ts it's possible to use a baseUrl, if we remove the // for the baseUrl. We can use relative paths (for example `/`) for local testing environments.
+- This opens the given URL.
+- If you configure a `baseUrl` in `cypress.config.ts`, you can use relative URLs for simplicity:
+  ```js
+  // With baseUrl: 'http://localhost:4200'
+  cy.visit('/') // Loads http://localhost:4200
+  ```
+
+**Best practice:**  
+Start every test by visiting the page you want to test, so tests are isolated and repeatable.
+
+---
+
+### `cy.get()`
+
+**Purpose:**  
+Finds one or more elements on the page, so you can interact with them or make assertions.
+
+**Usage:**
 ```js
-cy.visit('/')
+cy.get('[data-cy=submit-button]')
 ```
----
+- **By data attribute:**  
+  `cy.get('[data-cy=submit-button]')` (recommended for stability)
+- **By id:**  
+  `cy.get('#element-id')` (also good)
+- **By class:**  
+  `cy.get('.some-class')`
 
-### Selecting Elements (`cy.get()`)
-
-Used to find HTML elements on your page.
-
-**Ways to select elements:**
-
-* **By id**: `cy.get('#element-id')`
-* **By data attributes**: `cy.get('[data-cy=submit-button]')`
-* **By CSS class**: `cy.get('.button-class')`
-
-**Recommended:** Use data attributes (`data-cy`) or use (`id`) for stable, reliable selections.
-
----
-
-### Finding Text (`cy.contains()`)
-
-Selects elements containing specific text.
-
-**Example:**
-
+**Tip:**  
+Always use unique selectors (`data-cy`, `id`) to avoid flaky tests.
+Also in the get there is a build in timeout option
 ```js
-cy.contains('Username')
+cy.get('[data-cy=submit-button]', { timeout: 1000 }) 
 ```
+This checks every 50ms if the element is visible, but for one seconds long so it checks 20 times. If after 1 second the element still wasn't found the test fails
+---
+
+### `cy.contains()`
+
+**Purpose:**  
+Selects elements by their visible text content.  
+Useful when you want to click a button or check for a specific label without knowing the selector.
+
+**Usage:**
+```js
+cy.contains('Submit') // Finds element with text "Submit"
+cy.contains('Log in').click() // Clicks the button/text
+```
+- Useful for language-independent or dynamic elements.
+- Can be combined with `.get()` for specificity:
+  ```js
+  cy.get('.alert').contains('Error')
+  ```
 
 ---
 
-### Clicking Elements (`cy.click()`)
+### `cy.click()`
 
-Clicks on an element you’ve selected.
+**Purpose:**  
+Simulates a user clicking on an element.
 
-**Example:**
-
+**Usage:**
 ```js
 cy.get('[data-cy=login-btn]').click()
 ```
+- You must select the element with `.get()` or `.contains()` first.
+- Works for buttons, links, checkboxes, etc.
+
+**Tip:**  
+Chain `.click()` after `.get()` or `.contains()`.
 
 ---
 
-### Typing into Fields (`cy.type()`)
+### `cy.type()`
 
-Simulates typing into input fields.
+**Purpose:**  
+Types (simulates keyboard input) into a form input, textarea, or similar element.
+
+**Usage:**
+```js
+cy.get('[data-cy=username]').type('123')
+cy.get('[data-cy=password]').type('123') //username and password are in this application the same
+```
+- Use for login forms, search bars, etc.
+- You can type special keys with `{enter}`, `{tab}`, etc.
 
 **Example:**
-
 ```js
-cy.get('[data-cy=username]').type('myUser')
+cy.get('[data-cy=search]').type('Cypress{enter}')
 ```
 
 ---
 
-## Assertions (`.should()`)
+### `cy.should()`
 
-Checks conditions to confirm elements behave as expected.
+**Purpose:**  
+**Makes assertions** about elements or data, and is the main way to check if your app is behaving as expected.
 
-**Example:**
-
+**Usage:**
 ```js
 cy.get('[data-cy=success-message]').should('be.visible')
+cy.get('[data-cy=username]').should('have.value', 'myUser')
+cy.get('[data-cy=alert]').should('contain.text', 'Invalid credentials')
 ```
 
-**Common assertions include:**
-* `'be.visible'` (element visible)
-* `'have.text', 'Your Text'` (exact text match)
+**Common assertions:**
+- `'not.be.disabled'`: The element is enabled (clickable).
+- `'be.visible'`: Element is visible to the user.
+- `'not.exist'`: Element is not present.
+- `'have.text', 'Your Text'`: Has exact text.
+- `'contain.text', 'Partial'`: Contains partial text.
+- `'have.value', 'something'`: Input or textarea value.
+- `'be.checked'`: Checkbox or radio is checked.
+
+**Example:**
+```js
+// Check that the login button is not disabled
+cy.get('[data-cy=login-button]').should('not.be.disabled')
+
+// Check that the success message is visible to the user
+cy.get('[data-cy=success-message]').should('be.visible')
+
+// Check that an error message is NOT present in the DOM
+cy.get('[data-cy=error-message]').should('not.exist')
+
+// Check that a welcome element has EXACTLY the expected text
+cy.get('[data-cy=welcome-message]').should('have.text', 'Welcome, John!')
+
+// Check that an alert contains PART of the expected text
+cy.get('[data-cy=alert]').should('contain.text', 'Invalid credentials')
+
+// Check that an input field has a specific value
+cy.get('[data-cy=username]').should('have.value', 'myUser')
+
+// Check that a checkbox is checked
+cy.get('[data-cy=terms-checkbox]').should('be.checked')
+```
+
+**Tip:**  
+Cypress automatically waits for assertions to pass (built-in retry-ability), so tests are stable.
+
 ---
 
-## Waiting for Elements
-### Explicit Wait (`cy.wait()`)
-Pauses test execution.
-**Examples:**
-```js
-cy.wait(1000)
-cy.wait('@getUser') // waits for a network request labeled "getUser"
-```
+## Network Requests: Intercept and Fixtures
 
-**Tip:** Prefer waiting for specific events or network requests instead of fixed times for better reliability.
+Testing with real APIs can be flaky or slow. Cypress lets you mock network requests for stable, fast tests.
 
 ---
 
-# Network Requests: `cy.intercept()` & Fixtures
+### `cy.intercept()`
 
-## Intercepting Network Requests with `cy.intercept()`
+**Purpose:**  
+Intercepts and controls network (HTTP) requests in your app.  
+You can mock responses or wait for requests to complete.
 
-`cy.intercept()` in Cypress allows you to catch and control network requests that your application makes during testing.  
-You can use it to:
-
-- **Mock API responses**: Return fake data instead of calling the real backend.
-- **Observe and wait for requests**: Confirm that your app is making the right calls.
-
-This makes your tests faster, more reliable, and independent of external APIs.
-
-**Basic Example:**
+**Usage:**
 ```js
-cy.intercept('GET', '/api/users', { fixture: 'users.json' }).as('getUsers');
+cy.intercept('GET', '/api/users', { fixture: 'users.json' }).as('getUsers')
+```
+- Any GET request to `/api/users` is intercepted and returns the data from `users.json` (from the `fixtures` folder).
+- `.as('getUsers')` gives this interception a name for later reference (e.g., with `cy.wait('@getUsers')`).
+
+**Why use it?**
+- Tests run without depending on real APIs.
+- Control responses (simulate errors, slow responses, etc).
+- Confirm your app makes the right API calls.
+
+**Example (wait for network call):**
+```js
+cy.wait('@getUsers')
 ```
 
-Any GET request to /api/users will receive the static response from the users.json fixture.
-.as('getUsers') lets you reference this interception elsewhere in your test (e.g., cy.wait('@getUsers')).
+---
 
-**Using Fixtures**
-Fixtures are files (often JSON) containing static, fake data for use in your tests.
-They live in the cypress/fixtures/ map.
+### Fixtures
 
-Example fixture file: cypress/fixtures/user.json
+**Purpose:**  
+Provide **static mock data** (usually in JSON) for your tests.
 
+**Where:**  
+Fixtures live in the `cypress/fixtures/` folder.
+
+**Example:** `cypress/fixtures/user.json`
+```json
 {
   "id": 1,
   "name": "John Doe",
   "email": "john@example.com"
 }
-
-**Ways to use fixtures:**
-To populate a form or use as mock API data.
-
-To keep your tests consistent and predictable.
-
-### Using Intercept and Fixtures Together
-**You can combine both to fully mock API calls with static fixture data:**
-Example:
-
-cy.intercept('GET', '/api/check-user', { fixture: 'user.json' }).as('checkUser');
-cy.visit('/login');
-cy.wait('@checkUser'); // Waits for the intercepted call
-Now, every time your app requests /api/check-user, it will always receive the data from user.json.
-
-**Summary**
-cy.intercept(): Catches and controls network requests; lets you mock or observe them.
-Fixture: Static data file (like JSON) used for consistent test data and mocking.
-Together: Use interceptors to return fixture data for API calls, making your tests stable and predictable.
-
-## Organizing Tests
-Use `describe()` to group tests and `it()` to define individual test cases clearly.
-
-**Example:**
-
-```js
-describe('Login Tests', () => {
-    it('should log in successfully', () => {
-        cy.visit('/')
-        cy.get('[data-cy=username]').type('user')
-        cy.get('[data-cy=password]').type('pass')
-        cy.get('[data-cy=login-button]').click()
-    })
-})
 ```
+
+**How to use:**
+- As a direct import in your test:
+  ```js
+  cy.fixture('user.json').then((user) => {
+    cy.get('[data-cy=username]').type(user.name)
+  })
+  ```
+- As a mock response with `cy.intercept()`.
+
+**Why use fixtures?**
+- Ensure consistent, repeatable tests.
+- Avoid calling real APIs or databases.
+
 ---
 
-## Creating Custom Commands
-Imagine that everyone has to write this code:
-```js
-cy.get('[data-cy=username]').type('user')
-        cy.get('[data-cy=password]').type('pass')
-        cy.get('[data-cy=login-button]').click()
-```
-This would cause a lot of duplicate code, Cypress has a way to prevent this: which are Commands.
-Simplify repeated tasks with reusable commands.
+### Combining Intercept and Fixtures
+
+**Common pattern:**  
+Mock an API endpoint by intercepting the request and responding with fixture data.
 
 **Example:**
-
 ```js
-Cypress.Commands.add('login', (username, password) => {
-    cy.get('[data-cy=username]').type(username)
-    cy.get('[data-cy=password]').type(password)
+cy.intercept('GET', '/api/check-user', { fixture: 'user.json' }).as('checkUser');
+cy.visit('/login');
+cy.wait('@checkUser'); // Ensures the request completed/mocked
+```
+- Now, whenever your app makes a GET request to `/api/check-user`, Cypress instantly returns the content of `user.json`.
+
+---
+
+## Organizing Tests
+
+Group related tests together for readability and maintainability.
+
+**Usage:**
+```js
+describe('Login Tests', () => {
+  it('should log in successfully', () => {
+    cy.visit('/')
+    cy.get('[data-cy=username]').type('user')
+    cy.get('[data-cy=password]').type('pass')
     cy.get('[data-cy=login-button]').click()
+    cy.get('[data-cy=success-message]').should('be.visible')
+  })
 })
 ```
-Now the code is created once, and the developer/tester can use it like this: 
+- `describe()` groups related tests.
+- `it()` defines a single test case.
 
+---
+
+## Custom Commands
+
+When you find yourself repeating sequences of Cypress commands, make a custom command for clarity and DRY code.
+
+**How to add:**
+In `cypress/support/commands.js`:
 ```js
-cy.login('123', '123')
+Cypress.Commands.add('login', (username, password) => {
+  cy.get('[data-cy=username]').type(username)
+  cy.get('[data-cy=password]').type(password)
+  cy.get('[data-cy=login-button]').click()
+})
 ```
+
+**How to use in your test:**
+```js
+cy.login('myUser', 'myPass')
+```
+
+**Why use custom commands?**
+- Cleaner, shorter, and more maintainable tests.
+- Changes only need to be made in one place.
 
 ---
 
 ## Helpful Tips
-* **Aliasing (`.as()`)**:
+
+- **Aliasing (`.as()`)**: Give any command or selector a nickname for easy reuse.
   ```js
   cy.get('[data-cy=submit-button]').as('submitBtn')
   cy.get('@submitBtn').click()
   ```
-
-* **Debugging**:
-
+- **Debugging**:
   ```js
   cy.get('[data-cy=username]').debug()
   cy.pause()
   ```
-
-* Cypress automatically records videos and screenshots for debugging.
+  These commands help you pause and inspect your tests in the Cypress browser.
+- **Screenshots and Videos**: Cypress automatically records videos/screenshots on failures for easier debugging.
 
 ---
 
-## Common Pitfalls (Gotchas)
+## Common Pitfalls
 
-* **Avoid fixed `cy.wait()` times** unless necessary.
-* Cypress commands retry automatically—no need for explicit loops.
-* Mixing Cypress commands with regular JavaScript promises can lead to issues—use Cypress commands consistently for reliable tests.
+- **Avoid fixed waits (`cy.wait(1000)`)** unless absolutely necessary. Prefer waiting for events/network calls.
+- Cypress commands are **asynchronous** and **chainable**—do not mix them with regular JS promises, as it can lead to unpredictable results.
+- Cypress **retries commands and assertions** by default—no need for custom loops or repeated checks.
+- Always use **unique selectors** (like `data-cy`) for element targeting—don’t rely on text, CSS classes, or deeply nested selectors.
+
 ---
 
-Happy Testing!
+## Happy Testing!
+ 
+If you need more advanced examples or run into issues, check the [official Cypress documentation](https://docs.cypress.io/)!
+---
