@@ -1,0 +1,68 @@
+<div class="login-container" *ngIf="!showTable">
+  <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
+    <label for="usernameInput">Username</label>
+    <input
+      formControlName="username"
+      id="usernameInput"
+      type="text"
+      placeholder="Username"
+      autocomplete="username"
+      data-cy="username-input"
+    />
+    <label for="passwordInput">Password</label>
+    <input
+      formControlName="password"
+      id="passwordInput"
+      type="password"
+      placeholder="Password"
+      autocomplete="current-password"
+      data-cy="password-input"
+    />
+    <button id="loginBtn" type="submit" data-cy="login-btn">Login</button>
+  </form>
+</div>
+
+<div *ngIf="showTable">
+  <table id="table" class="simple-table" data-cy="items-table">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Content</th>
+        <th>UserId</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items; let i = index;">
+        <td id="idItem{{i}}">{{item.id}}</td>
+        <td id="titleItem{{i}}">{{item.title}}</td>
+        <td id="bodyItem{{i}}">{{item.body}}</td>
+        <td id="userIdItem{{i}}">{{item.userId}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <form [formGroup]="form" (ngSubmit)="fillInForm()">
+    <label for="titleInput">Titel</label>
+    <input
+      id="titleInput"
+      type="text"
+      formControlName="title"
+      placeholder="Titel"
+      data-cy="title-input"
+    />
+    <label for="bodyInput">Inhoud</label>
+    <input
+      id="bodyInput"
+      type="text"
+      formControlName="body"
+      placeholder="Inhoud"
+      data-cy="body-input"
+    />
+    <button id="submitBtn" type="submit" data-cy="submit-btn">Verstuur</button>
+  </form>
+</div>
+
+<div id="toast-message" class="error-toast" *ngIf="loginError" data-cy="login-error">
+  <p>De gegevens zijn onjuist</p>
+</div>

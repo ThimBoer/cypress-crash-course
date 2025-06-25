@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "Understanding Cypress Fixtures",
+    "body": "Fixtures help you mock data for testing routes efficiently.",
+    "userId": 101
+  },
+  {
+    "id": 2,
+    "title": "Mocking API Responses",
+    "body": "Use fixtures to simulate API responses in your tests.",
+    "userId": 102
+  },
+  {
+    "id": 3,
+    "title": "Testing with Sample Data",
+    "body": "Sample data ensures your tests are reliable and repeatable.",
+    "userId": 103
+  },
+  {
+    "id": 4,
+    "title": "Automating UI Tests",
+    "body": "Automate UI tests by providing consistent mock data.",
+    "userId": 104
+  },
+  {
+    "id": 5,
+    "title": "Improving Test Coverage",
+    "body": "Fixtures allow you to test edge cases easily.",
+    "userId": 105
+  },
+  {
+    "id": 6,
+    "title": "Reusable Test Data",
+    "body": "Store reusable data in fixture files for maintainability.",
+    "userId": 106
+  },
+  {
+    "id": 7,
+    "title": "Simplifying Test Setup",
+    "body": "Fixtures simplify the setup process for complex tests.",
+    "userId": 107
+  },
+  {
+    "id": 8,
+    "title": "Consistent Test Results",
+    "body": "Mock data ensures your tests produce consistent results.",
+    "userId": 108
+  },
+  {
+    "id": 9,
+    "title": "Faster Test Execution",
+    "body": "Using fixtures can speed up your test execution time.",
+    "userId": 109
+  },
+  {
+    "id": 10,
+    "title": "Organizing Test Data",
+    "body": "Keep your test data organized with separate fixture files.",
+    "userId": 110
+  }
+]
