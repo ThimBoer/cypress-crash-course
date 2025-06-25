@@ -1,7 +1,7 @@
 
 # Cypress Crash Course
 
-Welcome! This guide is designed to get you started with Cypress and help you write clear, robust, and maintainable end-to-end tests for your Angular application.
+Welcome! This guide is designed to get you started with Cypress and help you write clear, and maintainable end-to-end tests.
 
 ---
 
