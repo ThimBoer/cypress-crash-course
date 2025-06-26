@@ -1,7 +1,7 @@
 
 # Cypress Crash Course
 
-Welcome! This guide is designed to get you started with Cypress and help you write clear, and maintainable end-to-end tests.
+Welcome! This guide is designed to get you started with Cypress and help you write clear, robust, and maintainable end-to-end tests for your Angular application.
 
 ---
 
@@ -65,16 +65,7 @@ Your app should now be available at [http://localhost:4200](http://localhost:420
 
 ---
 
-### 4. Install Cypress
-
-Open a new terminal window (keep the app running) and install Cypress as a dev dependency:
-```bash
-npm install cypress --save-dev
-```
-
----
-
-### 5. Open Cypress Test Runner
+### 4. Open Cypress Test Runner
 
 Launch the Cypress UI:
 ```bash
@@ -83,6 +74,8 @@ npx cypress open
 This opens the interface where you can run and manage your tests.
 
 ---
+
+# Tips && Tricks
 
 ## Folder Structure
 
