@@ -6,5 +6,9 @@ Cypress.Commands.add('showTable', (buttonId, tableId) => {
 Cypress.Commands.add('login', (username, password, buttonId) => {
     cy.get('#usernameInput').type(username);
     cy.get('#passwordInput').type(password);
-    cy.get('#loginBtn').click();
+    if(buttonId === undefined) {
+      cy.get('#loginBtn').click();
+    } else {
+      cy.get(buttonId).click();
+    }
 });
