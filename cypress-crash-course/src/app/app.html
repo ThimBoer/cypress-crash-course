@@ -42,24 +42,46 @@
     </tbody>
   </table>
 
-  <form [formGroup]="form" (ngSubmit)="fillInForm()">
-    <label for="titleInput">Titel</label>
-    <input
-      id="titleInput"
-      type="text"
-      formControlName="title"
-      placeholder="Titel"
-      data-cy="title-input"
-    />
-    <label for="bodyInput">Inhoud</label>
-    <input
-      id="bodyInput"
-      type="text"
-      formControlName="body"
-      placeholder="Inhoud"
-      data-cy="body-input"
-    />
-    <button id="submitBtn" type="submit" data-cy="submit-btn">Verstuur</button>
+  <form [formGroup]="form" (ngSubmit)="fillInForm()" style="display: flex; align-items: flex-start; gap: 1rem;">
+    <div style="display: flex; flex-direction: column;">
+      <label for="titleInput">Titel</label>
+      <input
+        id="titleInput"
+        type="text"
+        formControlName="title"
+        placeholder="Titel"
+        data-cy="title-input"
+      />
+      <span *ngIf="submitted && form.get('title')?.errors" style="color: red; margin-top: -14px;">
+        <p data-cy="title-required-text" *ngIf="form.get('title')?.errors?.['required']">
+          Titel is verplicht.
+        </p>
+        <p data-cy="title-length-text" *ngIf="form.get('title')?.errors?.['minlength']">
+          Titel moet minimaal {{ form.get('title')?.errors?.['minlength'].requiredLength }} tekens bevatten.
+        </p>
+      </span>
+    </div>
+    <div style="display: flex; flex-direction: column;">
+      <label for="bodyInput">Inhoud</label>
+      <input
+        id="bodyInput"
+        type="text"
+        formControlName="body"
+        placeholder="Inhoud"
+        data-cy="body-input"
+      />
+      <span *ngIf="submitted && form.get('body')?.errors" style="color: red; margin-top: -14px">
+        <p data-cy="body-required-text" *ngIf="form.get('body')?.errors?.['required']">
+          Inhoud is verplicht.
+        </p>
+        <p data-cy="body-length-text" *ngIf="form.get('body')?.errors?.['minlength']">
+          Inhoud moet minimaal {{ form.get('body')?.errors?.['minlength'].requiredLength }} tekens bevatten.
+        </p>
+      </span>
+    </div>
+    <div style="display: flex; flex-direction: column; justify-content: flex-end;">
+      <button id="submitBtn" type="submit" data-cy="submit-btn" style="margin-top: 1.6em;">Verstuur</button>
+    </div>
   </form>
 </div>
 
