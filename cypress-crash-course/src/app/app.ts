@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 interface JsonModel {
   id?: number;
@@ -18,6 +18,7 @@ interface JsonModel {
   styleUrls: ['./app.scss']
 })
 export class AppComponent implements OnInit {
+  protected submitted = false;
   protected loginError = false;
   protected showTable = false;
   protected users = [{ username: '123', password: '123' }];
@@ -30,8 +31,8 @@ export class AppComponent implements OnInit {
   });
 
   form = new FormGroup({
-    title: new FormControl(''),
-    body: new FormControl(''),
+    title: new FormControl('', { validators: [Validators.minLength(5), Validators.required], updateOn: 'blur' }),
+    body: new FormControl('', { validators: [Validators.minLength(15), Validators.required], updateOn: 'blur' }),
     userId: new FormControl(1),
     id: new FormControl(0)
   });
@@ -46,9 +47,12 @@ export class AppComponent implements OnInit {
   }
 
   fillInForm(): void {
+    this.submitted = true;
     const data = { ...this.form.value, id: this.items.length + 1 } as JsonModel;
-    this.items.push(data);
-    this.form.reset({ title: '', body: '', userId: 0, id: 0 });
+    if(this.form.valid) {
+      this.items.push(data);
+      this.form.reset({ title: '', body: '', userId: 0, id: 0 });
+    }
   }
 
   login(): void {
