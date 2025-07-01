@@ -33,6 +33,11 @@ Welcome! This guide is designed to get you started with Cypress and help you wri
 Follow these steps to set up your Angular app and Cypress:
 
 ### 1. Clone the Angular Application
+Create a folder on your local machine.
+Open your code editor (preferably Visual studio code).
+Add the created folder as a workspace.
+Open a new terminal inside visual studio code. 
+Add the following command to your terminal
 
 Clone the repository from GitHub:
 ```bash
@@ -40,10 +45,8 @@ git clone https://github.com/ThimBoer/cypress-crash-course.git
 ```
 Navigate into the project folder:
 ```bash
-cd <repository-folder>
+cd cypress-crash-course
 ```
-Replace `<repository-folder>` with the actual folder name.
-
 ---
 
 ### 2. Install Application Dependencies
